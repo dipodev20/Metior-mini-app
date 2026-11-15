@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Политика конфиденциальности — Metior</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<header class="top">
+  <a class="brand" href="./" aria-label="Metior — на главную">
+    <img class="logo" src="logo.png" width="38" height="38" alt="">
+    <span class="brand-name">METIOR</span>
+  </a>
+  <a class="btn ghost" href="./" style="margin-left:auto"><span data-i="back"></span>В каталог</a>
+</header>
+
+<main class="doc">
+  <h1>Политика конфиденциальности</h1>
+  <p class="upd">Дата последнего обновления: <!-- УКАЖИТЕ ДАТУ -->15.11.2026</p>
+
+  <p>Эта политика объясняет, какие данные собирает сайт Metior (далее — «Сайт»), зачем и как вы можете ими управлять. Пользуясь Сайтом, вы соглашаетесь с её условиями в части, не требующей отдельного согласия.</p>
+
+  <h2>1. Кто мы</h2>
+  <p>Владелец Сайта: <!-- УКАЖИТЕ ИМЯ / НАЗВАНИЕ -->[имя или название владельца]. Контакты для любых вопросов о данных: <a href="mailto:admin@example.com">admin@example.com</a>.</p>
+
+  <h2>2. Какие данные собираются</h2>
+  <ul>
+    <li><strong>Данные, которые вы передаёте нам сами:</strong> только то, что вы пишете в письме на наш email. Регистрации и аккаунтов на Сайте нет.</li>
+    <li><strong>Локальное хранилище (localStorage):</strong> мы сохраняем в вашем браузере один параметр — ваш выбор в cookie-баннере («принято» или «отклонено»). Он не отправляется на сервер. Там же хранятся ваш список избранных игр и последние запущенные игры — эти данные остаются только в вашем браузере.</li>
+    <li><strong>Технические данные при посещении:</strong> IP-адрес, тип браузера и устройства, дата и время запроса. Их обрабатывает хостинг-провайдер для работы и защиты Сайта.</li>
+  </ul>
+
+  <h2>3. Cookie и реклама (Adsterra)</h2>
+  <p>Сайт показывает рекламу сети Adsterra. Если вы нажали «Принять» в cookie-баннере, на Сайт загружается скрипт Adsterra. Он может использовать cookie и похожие технологии, чтобы показывать рекламу, ограничивать частоту показов, измерять результаты и предотвращать мошенничество. При этом Adsterra может получать ваш IP-адрес, сведения о браузере и устройстве, а также данные о просмотренных страницах и рекламе.</p>
+  <p>Если вы нажали «Отклонить», рекламный скрипт и другие сторонние скрипты <strong>не загружаются</strong>.</p>
+  <p>Обработка данных Adsterra регулируется её собственной политикой конфиденциальности, с которой можно ознакомиться на сайте adsterra.com.</p>
+
+  <h2>4. Как изменить или отозвать согласие</h2>
+  <p>Нажмите «Настройки cookie» в подвале любой страницы и выберите нужный вариант. Также вы можете удалить cookie и данные Сайта в настройках браузера.</p>
+
+  <h2>5. Игры сторонних авторов</h2>
+  <p>Игры запускаются во встроенном окне (iframe) и могут быть созданы третьими лицами. Мы ограничиваем их права с помощью sandbox-режима браузера, но рекомендуем не вводить в играх личные данные.</p>
+
+  <h2>6. Передача данных третьим лицам</h2>
+  <p>Мы не продаём ваши данные. Они могут обрабатываться хостинг-провайдером и рекламной сетью Adsterra (только при вашем согласии) в объёме, описанном выше.</p>
+
+  <h2>7. Сроки хранения</h2>
+  <p>Выбор в cookie-баннере хранится в вашем браузере, пока вы его не удалите. Письма на email хранятся столько, сколько необходимо для ответа, затем удаляются. Сроки хранения данных у Adsterra указаны в её политике.</p>
+
+  <h2>8. Ваши права</h2>
+  <p>Вы можете запросить доступ к своим данным, их исправление или удаление, ограничить обработку или отозвать согласие. Для этого напишите на <a href="mailto:admin@example.com">admin@example.com</a>. Если вы находитесь в ЕС, вы также вправе обратиться в надзорный орган по защите данных.</p>
+
+  <h2>9. Дети</h2>
+  <p>Сайт не предназначен для детей младше 16 лет, и мы сознательно не собираем их данные.</p>
+
+  <h2>10. Изменения политики</h2>
+  <p>Мы можем обновлять эту политику. Актуальная версия всегда находится на этой странице, дата обновления указана вверху.</p>
+</main>
+
+<footer class="foot">
+  <span class="brand-name small">METIOR</span>
+  <nav aria-label="Правовая информация">
+    <a href="privacy.html"><span data-i="shield"></span>Политика конфиденциальности</a>
+    <button type="button" id="cookieSettings" class="linklike"><span data-i="cookie"></span>Настройки cookie</button>
+    <a href="mailto:admin@example.com"><span data-i="mail"></span>admin@example.com</a>
+  </nav>
+  <small>© <span id="year"></span> Metior</small>
+</footer>
+
+<div id="cookie" class="cookie" role="dialog" aria-label="Согласие на cookie" hidden>
+  <p><span data-i="cookie"></span> Мы используем cookie для показа рекламы (Adsterra). Если откажетесь, сторонние скрипты загружаться не будут.</p>
+  <div class="cookie-btns">
+    <button class="btn ghost" id="cookieNo" type="button">Отклонить</button>
+    <button class="btn" id="cookieYes" type="button">Принять</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
