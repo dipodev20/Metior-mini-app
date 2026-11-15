@@ -160,3 +160,10 @@ main{max-width:1200px;margin:0 auto;padding:22px 16px 10px}
   *,*::before,*::after{animation:none!important;transition:none!important}
   html{scroll-behavior:auto}.reveal{opacity:1;transform:none}
 }
+
+/* Реклама: слоты скрыты, пока нет согласия */
+.ad{display:none;max-width:1200px;margin:14px auto;padding:0 16px;text-align:center}
+.ad.on{display:block}
+.ad-native{padding:0;margin:10px 0 0}
+.ad-label{display:block;margin-bottom:4px;color:var(--dim);font-size:.7rem}
+.ad iframe{display:block;margin:0 auto}

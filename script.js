@@ -18,7 +18,16 @@ const NEWS = [
   { tag: { en: 'Update', ru: 'Обновление' }, title: { en: 'New games every week', ru: 'Новые игры каждую неделю' }, text: { en: 'Follow the catalog: we add fresh projects.', ru: 'Следите за каталогом: добавляем свежие проекты.' }, href: '#games' },
   { tag: { en: 'Ad', ru: 'Реклама' }, title: { en: 'Spot for an ad landing', ru: 'Место под рекламный лендинг' }, text: { en: 'Replace the link and text of this slide with a partner offer.', ru: 'Замените ссылку и текст этого слайда на оффер партнёра.' }, href: '#', ad: true }
 ];
-const ADS_SRC = ''; // Adsterra script URL, e.g. 'https://...adsterra.../invoke.js'
+// Реклама Adsterra (коды из кабинета). Грузится ТОЛЬКО после «Принять» в cookie-баннере.
+const ADS = {
+  social: 'https://bauval.org/14/37d0c6216ee65b57674a8164ec64abb2',
+  native: { src: 'https://bauval.org/21/298e9bd6db9a11c854203061af5d1d16', id: 'container-298e9bd6db9a11c854203061af5d1d16' },
+  banners: {
+    '320x50': { key: '8509cd75fe4bf5b15e0441a0481b6a51', w: 320, h: 50 },
+    '300x250': { key: '5b0996f70f4a3465ed657d492e30e2b1', w: 300, h: 250 },
+    '728x90': { key: '9b68483fb1fa6a4f9f111a357dd7ba67', w: 728, h: 90 }
+  }
+};
 
 /* ================= Languages (English by default) ================= */
 const I18N = {
@@ -34,7 +43,7 @@ const I18N = {
     rights: 'Games belong to their authors.', cookie_settings: 'Cookie settings',
     cookie_text: "We use cookies to show ads (Adsterra). If you decline, third-party scripts won't load.",
     learn_more: 'Learn more', decline: 'Decline', accept: 'Accept', language: 'Language',
-    news_aria: 'News and announcements', close: 'Close', slide: 'Slide'
+    news_aria: 'News and announcements', close: 'Close', slide: 'Slide', ad_label: 'Advertisement'
   },
   ru: {
     title_home: 'Metior — HTML5-игры в браузере', title_privacy: 'Политика конфиденциальности — Metior',
@@ -48,7 +57,7 @@ const I18N = {
     rights: 'Игры принадлежат их авторам.', cookie_settings: 'Настройки cookie',
     cookie_text: 'Мы используем cookie для показа рекламы (Adsterra). Если откажетесь, сторонние скрипты загружаться не будут.',
     learn_more: 'Подробнее', decline: 'Отклонить', accept: 'Принять', language: 'Язык',
-    news_aria: 'Новости и анонсы', close: 'Закрыть', slide: 'Слайд'
+    news_aria: 'Новости и анонсы', close: 'Закрыть', slide: 'Слайд', ad_label: 'Реклама'
   }
 };
 const LKEY = 'metior_lang';
@@ -134,14 +143,53 @@ const getConsent = () => { try { return localStorage.getItem(KEY); } catch { ret
 const setConsent = v => { try { localStorage.setItem(KEY, v); } catch { /* приватный режим */ } };
 let adsLoaded = false;
 
-// Загружает рекламный скрипт ТОЛЬКО если пользователь нажал «Принять».
-function loadAds() {
-  if (adsLoaded || getConsent() !== 'granted' || !ADS_SRC) return;
+// Баннер грузится в изолированном iframe (у каждого свой atOptions, без доступа к странице).
+function adFrame(b) {
+  const f = document.createElement('iframe');
+  f.width = b.w; f.height = b.h;
+  f.title = 'Advertisement';
+  f.style.border = '0';
+  f.style.maxWidth = '100%';
+  f.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation');
+  const opts = JSON.stringify({ key: b.key, format: 'iframe', height: b.h, width: b.w, params: {} });
+  f.srcdoc = '<!doctype html><html><body style="margin:0;overflow:hidden"><script>atOptions=' + opts +
+    ';<\/script><script src="https://bauval.org/22/' + b.key + '"><\/script></body></html>';
+  return f;
+}
+function adLabel() {
+  const l = el('span', 'ad-label', t('ad_label'));
+  l.dataset.t = 'ad_label';
+  return l;
+}
+function fillSlot(sel, b) {
+  const s = $(sel);
+  if (!s) return;
+  s.replaceChildren(adLabel(), adFrame(b));
+  s.classList.add('on');
+}
+function addScript(src, opts) {
   const s = document.createElement('script');
-  s.src = ADS_SRC;
+  s.src = src;
   s.async = true;
-  document.body.appendChild(s);
+  s.setAttribute('data-cfasync', 'false');
+  (opts || document.body).appendChild(s);
+}
+
+// Загружает рекламу ТОЛЬКО если пользователь нажал «Принять». Только на главной (там есть слоты).
+function loadAds() {
+  if (adsLoaded || getConsent() !== 'granted' || !$('#adTop')) return;
   adsLoaded = true;
+  fillSlot('#adTop', innerWidth >= 768 ? ADS.banners['728x90'] : ADS.banners['320x50']);
+  fillSlot('#adBottom', ADS.banners['300x250']);
+  const n = $('#adNative');
+  if (n) {
+    const box = document.createElement('div');
+    box.id = ADS.native.id;
+    n.replaceChildren(adLabel(), box);
+    n.classList.add('on');
+    addScript(ADS.native.src);
+  }
+  addScript(ADS.social); // Social Bar
 }
 
 function initCookie() {
