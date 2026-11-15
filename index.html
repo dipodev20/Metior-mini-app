@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="description" content="Metior — free HTML5 games that run right in your browser.">
+<title>Metior — HTML5 games in your browser</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-title="title_home">
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<header class="top">
+  <a class="brand" href="./" aria-label="Metior">
+    <img class="logo" src="logo.png" width="38" height="38" alt="">
+    <span class="brand-name">METIOR</span>
+  </a>
+  <form class="search" role="search" onsubmit="return false">
+    <span class="si"><span data-i="search"></span></span>
+    <input id="q" type="search" data-t-ph="search_ph" data-t-aria="search_aria" autocomplete="off">
+  </form>
+  <button id="menuBtn" class="burger" data-t-aria="menu_aria" aria-expanded="false" aria-controls="drawer"><svg class="ico burger-ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button>
+</header>
+
+<!-- ВСТАВИТЬ КОД ADSTERRA ЗДЕСЬ (верхний баннер)
+<div class="ad ad-top"></div>
+-->
+
+<main>
+  <section class="slider" id="slider" data-t-aria="news_aria" aria-roledescription="carousel">
+    <div class="track" id="track"></div>
+    <div class="dots" id="dots"></div>
+  </section>
+
+  <section id="recent" class="games recent" hidden>
+    <h2 data-t="recent"></h2>
+    <div class="grid" id="recentGrid"></div>
+  </section>
+
+  <section id="games" class="games">
+    <h2 data-t="games"></h2>
+    <div class="chips" id="chips" role="group" data-t-aria="filter_aria"></div>
+    <div class="grid" id="grid"></div>
+    <p class="empty" id="empty" hidden><span data-i="search"></span> <span data-t="empty"></span></p>
+  </section>
+
+  <section id="about" class="games about">
+    <h2 data-t="about_title"></h2>
+    <!-- ЗАМЕНИТЕ ТЕКСТ В script.js (I18N: about_text) -->
+    <p><span data-t="about_text"></span> <a href="mailto:admin@example.com">admin@example.com</a>.</p>
+  </section>
+</main>
+
+<!-- ВСТАВИТЬ КОД ADSTERRA ЗДЕСЬ (нижний баннер)
+<div class="ad ad-bottom"></div>
+-->
+
+<footer class="foot" id="contacts">
+  <span class="brand-name small">METIOR</span>
+  <nav aria-label="Legal">
+    <a href="privacy.html"><span data-i="shield"></span><span data-t="privacy"></span></a>
+    <button type="button" id="cookieSettings" class="linklike"><span data-i="cookie"></span><span data-t="cookie_settings"></span></button>
+    <a href="mailto:admin@example.com"><span data-i="mail"></span>admin@example.com</a>
+  </nav>
+  <small>© <span id="year"></span> Metior. <span data-t="rights"></span></small>
+</footer>
+
+<div id="scrim" class="scrim"></div>
+<aside id="drawer" class="drawer" aria-label="Menu">
+  <p class="drawer-title" data-t="sections"></p>
+  <nav>
+    <a href="#games"><span data-i="grid"></span><span data-t="catalog"></span></a>
+    <a href="#slider"><span data-i="news"></span><span data-t="news"></span></a>
+    <a href="#recent" id="navRecent" hidden><span data-i="clock"></span><span data-t="recent"></span></a>
+    <a href="#about"><span data-i="user"></span><span data-t="about"></span></a>
+    <a href="privacy.html"><span data-i="shield"></span><span data-t="privacy"></span></a>
+    <a href="#contacts"><span data-i="mail"></span><span data-t="contacts"></span></a>
+    <button type="button" data-open-settings><span data-i="sliders"></span><span data-t="settings"></span></button>
+  </nav>
+  <p class="drawer-note" data-t="esc_note"></p>
+</aside>
+
+<div id="settings" class="modal" role="dialog" aria-modal="true" aria-labelledby="setTitle" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="setTitle" data-t="settings"></h2>
+      <button type="button" class="iconbtn" id="settingsClose" data-t-aria="close"><span data-i="x"></span></button>
+    </div>
+    <p class="set-label"><span data-i="globe"></span><span data-t="language"></span></p>
+    <div class="seg" role="group"><button type="button" data-lang-btn="en">English</button><button type="button" data-lang-btn="ru">Русский</button></div>
+  </div>
+</div>
+
+<div id="player" class="player" hidden>
+  <div class="player-bar">
+    <a class="btn ghost" href="#games"><span data-i="back"></span><span data-t="back"></span></a>
+    <strong id="playerTitle"></strong>
+    <button class="btn ghost" id="fsBtn" type="button"><span data-i="expand"></span><span data-t="fullscreen"></span></button>
+  </div>
+  <iframe id="frame" title="Game" allow="fullscreen; autoplay; gamepad" allowfullscreen referrerpolicy="no-referrer"
+    sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-popups"></iframe>
+</div>
+
+<div id="cookie" class="cookie" role="dialog" aria-label="Cookies" hidden>
+  <p><span data-i="cookie"></span> <span data-t="cookie_text"></span> <a href="privacy.html" data-t="learn_more"></a></p>
+  <div class="cookie-btns">
+    <button class="btn ghost" id="cookieNo" type="button" data-t="decline"></button>
+    <button class="btn" id="cookieYes" type="button" data-t="accept"></button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
