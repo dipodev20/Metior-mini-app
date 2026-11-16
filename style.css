@@ -167,3 +167,10 @@ main{max-width:1200px;margin:0 auto;padding:22px 16px 10px}
 .ad-native{padding:0;margin:10px 0 0}
 .ad-label{display:block;margin-bottom:4px;color:var(--dim);font-size:.7rem}
 .ad iframe{display:block;margin:0 auto}
+.chips[hidden]{display:none}
+
+/* Рекламные блоки со скруглёнными углами */
+.ad-box{display:inline-block;max-width:100%;border-radius:14px;overflow:hidden;line-height:0;background:#fff}
+.ad-native{border-radius:14px;overflow:hidden}
+.slide-ad{align-items:center;justify-content:center;text-align:center;gap:8px;background:#000}
+.slide-ad .ad-label{color:#aaa;margin:0}

@@ -3,9 +3,8 @@
 /* ================= DATA — edit here ================= */
 // id: latin letters, digits, dashes. tags: keys from TAGS below (or any plain text).
 const GAMES = [
-  { id: 'space-runner', title: 'Space Runner', author: 'Your name', tags: ['arcade', 'space'], cover: '', url: 'games/space-runner/index.html' },
-  { id: 'pixel-dungeon', title: 'Pixel Dungeon', author: 'Your name', tags: ['adventure', 'pixel'], cover: '', url: 'games/pixel-dungeon/index.html' },
-  { id: 'neon-snake', title: 'Neon Snake', author: 'Your name', tags: ['arcade', 'classic'], cover: '', url: 'games/neon-snake/index.html' }
+  // Пример — скопируйте строку без «//», поправьте и добавьте через запятую:
+  // { id: 'my-game', title: 'My Game', author: 'Daniel Rysbekov', tags: ['arcade'], cover: 'games/my-game/cover.png', url: 'games/my-game/index.html' },
 ];
 const TAGS = {
   arcade: { en: 'Arcade', ru: 'Аркада' }, space: { en: 'Space', ru: 'Космос' },
@@ -16,7 +15,7 @@ const TAGS = {
 const NEWS = [
   { tag: { en: 'News', ru: 'Новости' }, title: { en: 'Welcome to Metior', ru: 'Добро пожаловать в Metior' }, text: { en: 'Play HTML5 games right in your browser — no install needed.', ru: 'Играйте в HTML5-игры прямо в браузере — без установки.' }, href: '#games' },
   { tag: { en: 'Update', ru: 'Обновление' }, title: { en: 'New games every week', ru: 'Новые игры каждую неделю' }, text: { en: 'Follow the catalog: we add fresh projects.', ru: 'Следите за каталогом: добавляем свежие проекты.' }, href: '#games' },
-  { tag: { en: 'Ad', ru: 'Реклама' }, title: { en: 'Spot for an ad landing', ru: 'Место под рекламный лендинг' }, text: { en: 'Replace the link and text of this slide with a partner offer.', ru: 'Замените ссылку и текст этого слайда на оффер партнёра.' }, href: '#', ad: true }
+  { adSlide: true } // рекламный слайд: показывается только после «Принять»
 ];
 // Реклама Adsterra (коды из кабинета). Грузится ТОЛЬКО после «Принять» в cookie-баннере.
 const ADS = {
@@ -43,7 +42,7 @@ const I18N = {
     rights: 'Games belong to their authors.', cookie_settings: 'Cookie settings',
     cookie_text: "We use cookies to show ads (Adsterra). If you decline, third-party scripts won't load.",
     learn_more: 'Learn more', decline: 'Decline', accept: 'Accept', language: 'Language',
-    news_aria: 'News and announcements', close: 'Close', slide: 'Slide', ad_label: 'Advertisement'
+    news_aria: 'News and announcements', close: 'Close', slide: 'Slide', ad_label: 'Advertisement', coming_soon: 'No games yet — new ones are coming soon.'
   },
   ru: {
     title_home: 'Metior — HTML5-игры в браузере', title_privacy: 'Политика конфиденциальности — Metior',
@@ -57,7 +56,7 @@ const I18N = {
     rights: 'Игры принадлежат их авторам.', cookie_settings: 'Настройки cookie',
     cookie_text: 'Мы используем cookie для показа рекламы (Adsterra). Если откажетесь, сторонние скрипты загружаться не будут.',
     learn_more: 'Подробнее', decline: 'Отклонить', accept: 'Принять', language: 'Язык',
-    news_aria: 'Новости и анонсы', close: 'Закрыть', slide: 'Слайд', ad_label: 'Реклама'
+    news_aria: 'Новости и анонсы', close: 'Закрыть', slide: 'Слайд', ad_label: 'Реклама', coming_soon: 'Игр пока нет — скоро появятся новые.'
   }
 };
 const LKEY = 'metior_lang';
@@ -142,6 +141,7 @@ const KEY = 'metior_consent';
 const getConsent = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
 const setConsent = v => { try { localStorage.setItem(KEY, v); } catch { /* приватный режим */ } };
 let adsLoaded = false;
+let rebuildSlider = null; // пересборка слайдера, когда появился рекламный слайд
 
 // Баннер грузится в изолированном iframe (у каждого свой atOptions, без доступа к странице).
 function adFrame(b) {
@@ -164,7 +164,9 @@ function adLabel() {
 function fillSlot(sel, b) {
   const s = $(sel);
   if (!s) return;
-  s.replaceChildren(adLabel(), adFrame(b));
+  const bx = el('div', 'ad-box');
+  bx.append(adFrame(b));
+  s.replaceChildren(adLabel(), bx);
   s.classList.add('on');
 }
 function addScript(src, opts) {
@@ -177,10 +179,9 @@ function addScript(src, opts) {
 
 // Загружает рекламу ТОЛЬКО если пользователь нажал «Принять». Только на главной (там есть слоты).
 function loadAds() {
-  if (adsLoaded || getConsent() !== 'granted' || !$('#adTop')) return;
+  if (adsLoaded || getConsent() !== 'granted' || !$('#adBottom')) return;
   adsLoaded = true;
-  fillSlot('#adTop', innerWidth >= 768 ? ADS.banners['728x90'] : ADS.banners['320x50']);
-  fillSlot('#adBottom', ADS.banners['300x250']);
+  fillSlot('#adBottom', innerWidth >= 768 ? ADS.banners['300x250'] : ADS.banners['320x50']);
   const n = $('#adNative');
   if (n) {
     const box = document.createElement('div');
@@ -189,6 +190,7 @@ function loadAds() {
     n.classList.add('on');
     addScript(ADS.native.src);
   }
+  if (rebuildSlider) rebuildSlider(); // рекламный слайд появляется в слайдере сверху
   addScript(ADS.social); // Social Bar
 }
 
@@ -233,11 +235,19 @@ function initSlider() {
   let i = 0, timer = null;
   function build() {
     track.replaceChildren(); dots.replaceChildren();
-    NEWS.forEach((n, k) => {
-      const a = el('a', 'slide');
-      a.href = n.href;
-      if (n.ad) { a.target = '_blank'; a.rel = 'noopener noreferrer sponsored'; }
-      a.append(el('span', 'tag', L(n.tag)), el('h3', '', L(n.title)), el('p', '', L(n.text)));
+    NEWS.filter(n => !n.adSlide || adsLoaded).forEach((n, k) => {
+      let a;
+      if (n.adSlide) {
+        a = el('div', 'slide slide-ad');
+        const bx = el('div', 'ad-box');
+        bx.append(adFrame(innerWidth >= 768 ? ADS.banners['728x90'] : ADS.banners['300x250']));
+        a.append(adLabel(), bx);
+      } else {
+        a = el('a', 'slide');
+        a.href = n.href;
+        if (n.ad) { a.target = '_blank'; a.rel = 'noopener noreferrer sponsored'; }
+        a.append(el('span', 'tag', L(n.tag)), el('h3', '', L(n.title)), el('p', '', L(n.text)));
+      }
       track.append(a);
       const d = el('button');
       d.type = 'button';
@@ -248,7 +258,8 @@ function initSlider() {
     go(i);
   }
   function go(n) {
-    i = (n + NEWS.length) % NEWS.length;
+    const cnt = track.children.length || 1;
+    i = (n + cnt) % cnt;
     track.style.transform = 'translateX(' + (-100 * i) + '%)';
     [...dots.children].forEach((d, k) => d.classList.toggle('on', k === i));
   }
@@ -265,6 +276,7 @@ function initSlider() {
     x0 = null;
   });
   langHooks.push(build);
+  rebuildSlider = build;
   build(); restart();
 }
 
@@ -313,7 +325,10 @@ function renderGames() {
     (!activeTag || (activeTag === '__fav' ? isFav(g.id) : g.tags.includes(activeTag))) &&
     (!q || (g.title + ' ' + g.author + ' ' + g.tags.map(tagName).join(' ')).toLowerCase().includes(q)));
   grid.replaceChildren(...list.map(card));
-  $('#empty').hidden = list.length > 0;
+  const em = $('#empty'), msg = em.querySelector('[data-t]');
+  msg.dataset.t = GAMES.length ? 'empty' : 'coming_soon';
+  msg.textContent = t(msg.dataset.t);
+  em.hidden = list.length > 0;
   grid.querySelectorAll('.reveal').forEach(n => io ? io.observe(n) : n.classList.add('in'));
 }
 
@@ -347,6 +362,7 @@ function buildChips() {
 
 function initCatalog() {
   if (!$('#chips')) return;
+  $('#chips').hidden = !GAMES.length;
   buildChips();
   $('#q').addEventListener('input', e => { query = e.target.value; renderGames(); });
   renderGames(); renderRecent();
